@@ -1,1 +1,1 @@
-# https://github.com/isetto/ManagingApp.git
+Applications allows to manage orders and employees
