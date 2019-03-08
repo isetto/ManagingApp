@@ -1,0 +1,83 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 40vmin;
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-mine{
+  background-color: #fff;
+  border-Radius: 5;
+  max-Width: 400;
+  min-Height: 400;
+  margin: 0 auto;
+  padding: 30;
+  position: relative;
+  overflow: scroll;
+  height: 700;
+}
+
+.nowDatePicker
+{
+  margin-top: 1.5rem;
+  margin-left: 1rem;
+  font-size: 17px;
+}
+
+.nowDatePicker:hover
+{
+  margin-top: 1.5rem;
+  margin-left: 1rem;
+	background-color: blue;
+	color: white;
+  cursor: pointer;
+  font-size: 17px;
+}
+
+.clearDate
+{
+  margin-top: 1.5rem;
+  
+  font-size: 13px;
+}
+
+.clearDate:hover
+{
+  margin-top: 1.5rem;
+  
+	background-color: blue;
+	color: white;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+
+
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+
+
+}

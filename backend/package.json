@@ -1,0 +1,30 @@
+{
+  "name": "crudkuba",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "make-db": "knex migrate:latest",
+    "clean-db": "knex migrate:rollback",
+    "seed": "knex seed:run",
+    "start": "nodemon ./src/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@koa/cors": "^2.2.3",
+    "knex": "^0.16.3",
+    "koa": "^2.6.2",
+    "koa-bodyparser": "^4.2.1",
+    "koa-router": "^7.4.0",
+    "mail-listener-next": "^1.0.5",
+    "moment": "^2.24.0",
+    "node-fetch": "^2.3.0",
+    "nodemon": "^1.18.9",
+    "path": "^0.12.7",
+    "pg": "^7.8.0"
+  },
+  "devDependencies": {
+    "gh-pages": "^2.0.1"
+  }
+}
