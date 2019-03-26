@@ -453,7 +453,10 @@ class Main extends Component {
             {
                 Header: "data zlecenia",
                 accessor: "dateOfOrder",
-
+                Cell: row => {
+                    if (row.value !== null)
+                        return (<span>{moment.utc(row.value).format('DD-MM-YYYY HH:mm')} </span>)
+                },
                 style: {
                     textAlign: "center"
                 },
@@ -536,6 +539,10 @@ class Main extends Component {
             {
                 Header: "czas zamknięcia",
                 accessor: "dateOfFinishedOrder",
+                Cell: row => {
+                    if (row.value !== null)
+                        return (<span>{moment.utc(row.value).format('DD-MM-YYYY HH:mm')} </span>)
+                },
                 style: {
                     textAlign: "center"
                 },
@@ -550,6 +557,10 @@ class Main extends Component {
             {
                 Header: "data akceptacji spacenet",
                 accessor: "dateOfAcceptationSpacenet",
+                Cell: row => {
+                    if (row.value != null)
+                        return (<span>{moment.utc(row.value).format('DD-MM-YYYY HH:mm')} </span>)
+                },
                 style: {
                     textAlign: "center"
                 },
@@ -564,6 +575,10 @@ class Main extends Component {
             {
                 Header: "data akceptacji plk",
                 accessor: "dateOfAcceptationPlk",
+                Cell: row => {
+                    if (row.value !== null)
+                        return (<span>{moment.utc(row.value).format('DD-MM-YYYY HH:mm')} </span>)
+                },
                 style: {
                     textAlign: "center"
                 },
@@ -787,6 +802,10 @@ class Main extends Component {
             {
                 Header: "data planowanych prac dodatkowych",
                 accessor: "dateOfAdditionalWorks",
+                Cell: row => {
+                    if (row.value !== null)
+                        return (<span>{moment.utc(row.value).format('DD-MM-YYYY HH:mm')} </span>)
+                },
                 style: {
                     textAlign: "center"
                 },
@@ -815,6 +834,10 @@ class Main extends Component {
             {
                 Header: "data faktury(wykonawca)",
                 accessor: "dateOfInvoice",
+                Cell: row => {
+                    if (row.value !== null)
+                        return (<span>{moment.utc(row.value).format('DD-MM-YYYY HH:mm')} </span>)
+                },
                 style: {
                     textAlign: "center"
                 },

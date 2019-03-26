@@ -22,13 +22,13 @@ exports.up = async (knex, Promise) => {
         table.string("showDateInput");
         table.boolean("disableInputs");
 
-        table.string("dateOfOrder");
-        table.string("dateOfFinishedOrder");
-        table.string("dateOfArrival");
-        table.string("dateOfAdditionalWorks");
-        table.string("dateOfInvoice");
-        table.string("dateOfAcceptationSpacenet");
-        table.string("dateOfAcceptationPlk");
+        table.datetime("dateOfOrder");
+        table.datetime("dateOfFinishedOrder");
+        table.datetime("dateOfArrival");
+        table.datetime("dateOfAdditionalWorks");
+        table.datetime("dateOfInvoice");
+        table.datetime("dateOfAcceptationSpacenet");
+        table.datetime("dateOfAcceptationPlk");
 
 
         table.string("workDoneDescription");

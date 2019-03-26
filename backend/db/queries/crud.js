@@ -65,7 +65,8 @@ module.exports = {
     .where(user),
 
   downloadReportsAll: async () => knex("spacenet")
-    .select("*"),
+    .select("*")
+    .orderBy("dateOfOrder", "desc"),
 
   downloadButtons: async (permissions) => knex("buttons")
     .select("*")
