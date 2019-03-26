@@ -15,7 +15,7 @@ class ExportToExcel extends Component {
 
             <div>
                 <ReactHTMLTableToExcel
-                    id="tableTestIdd"
+                    id="tableTestId"
                     className="export"
                     table="tableToXlsId"
                     filename="FiltredData"
