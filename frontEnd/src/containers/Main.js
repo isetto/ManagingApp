@@ -6,6 +6,7 @@ import ExportToExcel from "../components/ExportToExcel";
 import Modal from "../components/ModalComponent";
 import { downloadAllRaports, downloadButtons, updateButtons, deleteRaport, downloadSingleRaport, updateRaport, downloadRaports } from '../API';
 import moment from "moment";
+import Scrollbars from "react-custom-scrollbars"
 import { withRouter } from 'react-router-dom'
 import matchSorter from 'match-sorter'
 import AssignmentRaport from '../components/AssignmentRaport'
@@ -156,8 +157,13 @@ class Main extends Component {
             })
         }
 
+        this.downloadBt({ permissions: this.state.permissions })
 
-        downloadButtons({ permissions: this.state.permissions })
+    }
+
+    downloadBt = (permissions) => {
+        console.log("permissions")
+        downloadButtons(permissions)
             .then(buttons => {
                 this.setState({
                     executorBt: buttons.executorBt,
@@ -226,7 +232,17 @@ class Main extends Component {
     handleClose = () => { this.setState({ show: false }) }
     handleCloseButtons = () => { this.setState({ showButtons: false }) }
     handleCloseAssigmentRaport = () => { this.setState({ showAssigmentRaport: false }) }
-    onChangePermissions = (event) => { this.setState({ permissionsBt: event.target.value }) }
+    onChangePermissions = async (event) => {
+        try {
+            await this.setState({ permissionsBt: event.target.value })
+            console.log(this.state.permissionsBt)
+            this.downloadBt({ permissions: this.state.permissionsBt })
+        }
+        catch (error) {
+            console.log(error)
+        }
+
+    }
     onToggle = (value, name) => { this.setState({ [name]: !value }) }
 
     deleteRow(id) {
@@ -353,6 +369,11 @@ class Main extends Component {
             this.setState({ filtered });
     }
 
+    bodyComponent(tableState) {
+        return <Scrollbars style={{ height: 500 }}> <div className='my-tbody-class'>
+            {tableState.children} </div> </Scrollbars>
+    }
+
     render() {
 
         let { orderAcceptedByBt, executorBt, dateOfFinishedOrderBt, dateOfArrivalBt, dateOfAdditionalWorksBt,
@@ -360,6 +381,8 @@ class Main extends Component {
             commentsBt, protocolBt, actionBt, additionalWorksBt, additionalWorksDescriptionBt, additionalWorksExecutorBt,
             coordinatorPlkBt, systemRecoveryBt, photosAttachedBt, photosBt, serviceCostBt, materialCostBt,
             oldSnBt, newSnBt, invoiceIdBt } = this.state;
+
+
 
         const assigmentRaport = (
             <AssignmentRaport
@@ -643,7 +666,9 @@ class Main extends Component {
                                 value="Raport"
                                 className="btn btn-info" />
 
-                            <Modal onClose={this.showModal} show={this.state.show} >
+                            <Modal
+                                onClose={this.handleClose}
+                                show={this.state.show} >
                                 {modalRaport}
                             </Modal>
 
@@ -892,7 +917,7 @@ class Main extends Component {
                                 value="Edycja"
                                 className="btn btn-info" />
 
-                            <Modal onClose={this.showModalAssigmentRaport} show={this.state.showAssigmentRaport}  >
+                            <Modal onClose={this.handleCloseAssigmentRaport} show={this.state.showAssigmentRaport}  >
                                 {assigmentRaport}
                             </Modal>
 
@@ -972,6 +997,7 @@ class Main extends Component {
             }
         ]
 
+
         return (
             <div>
                 <div style={{ display: "flex", margin: "1rem" }} >
@@ -980,7 +1006,11 @@ class Main extends Component {
                         value="przyciski"
                         className="btn btn-success" />
 
-                    <Modal onClose={this.showModalButtons} show={this.state.showButtons} >{modalButtons}</Modal>
+                    <Modal
+                        onClose={this.showModalButtons}
+                        show={this.state.showButtons} >
+                        {modalButtons}
+                    </Modal>
                     <div  >
                         <button style={{ marginLeft: "2rem" }} type="button" className="btn btn-warning" onClick={() => {
                             this.props.history.push("/")
@@ -991,7 +1021,9 @@ class Main extends Component {
                 <div style={{ marginLeft: "1rem", marginBottom: "1rem" }}>
                     Szukaj: <input value={this.state.filterAll} onChange={this.filterAll} />
                 </div>
+
                 <ReactTable
+                    TbodyComponent={this.bodyComponent}
                     filtered={this.state.filtered}
                     ref={r => this.reactTable = r}
                     onFilteredChange={this.onFilteredChange.bind(this)}

@@ -32,10 +32,10 @@ class ModalRaport extends Component {
                                 disabled
                             >
                                 <option value=""></option>
-                                <option value="Dmitry Lititanskas">Dmitry Lititanskas</option>
-                                <option value="Krzysztof Lipiński">Krzysztof Lipiński</option>
-                                <option value="Paweł Żmijewski">Paweł Żmijewski</option>
-                                <option value="Zbigniew Fąk">Zbigniew Fąk</option>
+                                <option value="dmitry">Dmitry Lititanskas</option>
+                                <option value="krzysztof">Krzysztof Lipiński</option>
+                                <option value="paweł">Paweł Żmijewski</option>
+                                <option value="zbigniew">Zbigniew Fąk</option>
                             </select>
                             <br />
                         </div>

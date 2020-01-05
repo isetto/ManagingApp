@@ -7,6 +7,9 @@ class ModalButtons extends Component {
 
         this.state = {}
     }
+
+
+
     render() {
         const { state, permissions, toggle, close, save } = this.props
         return (<div >

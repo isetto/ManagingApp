@@ -76,13 +76,21 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
 
     try {
 
-      let RegexQuery = [/Status pracy o numerze .(....[0-9]+)./g, /Zlecona przez:.+?\s(.+)./g,
-        /Data zlecenia:..(.+)./g, /Dla lokalizacji:..(.+?)\[/g,
-        /Opis:..(.+)./g, /Kategoria:..(.+)./g,
-        /Tryb realizacji:..(.+)./g, /Wymagane pobranie części:..(.+)./g,
+      let RegexQuery = [/Status pracy o numerze (....[0-9]+)./g, /Zlecona przez:.+?\s(.+)/g,
+        /Data zlecenia:.(.+)./g, /Dla lokalizacji:.(.+?)\[/g,
+        /Opis:.(.+)./g, /Kategoria:.(.+)./g,
+        /Tryb realizacji:.(.+)./g, /Wymagane pobranie części:.(.+)./g,
         /Dla lokalizacji:.+?\[(.+?)\]/g,
-        /został zmieniony z .([^\s]+)/g, /Status pracy o numerze .....([0-9]+)./g, /Zlecona przez:..(.+)./g
+        /został zmieniony z ([^\s]+)/g, /Status pracy o numerze .....([0-9]+)./g, /Zlecona przez:.(.+)/g
       ];
+
+      // let RegexQuery = [/Status pracy o numerze <b>(.+?(?=<))/g, /Zlecona przez:.+?\s(.+?(?=<))/g,
+      //   /Data zlecenia: <b>(.+?(?=<))./g, /Dla lokalizacji: <b>(.+?)\[/g,
+      //   /Opis: <b>(.+?(?=<))/g, /Kategoria:..(.+)./g,
+      //   /Tryb realizacji: <b>(.+?(?=<))./g, /Wymagane pobranie części:..(.+)./g,
+      //   /Dla lokalizacji:.+?\[(.+?)\]/g,
+      //   /został zmieniony z <b>([^\s]+)/g, /Status pracy o numerze <b>....([0-9]+)/g, /Zlecona przez: <b>(.+?(?=<))/g
+      // ];
 
 
 
@@ -122,10 +130,11 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
       console.log("secondNameInstructing: ", secondNameInstructing[1])
 
       if (lastNameList.includes(secondNameInstructing[1])) {
-
+        console.log('typ: ', type[1])
         if (type[1] === "Formularz") {
 
           const post = await dane();
+          console.log('formularz', post)
           try {
             fetch(`${apiUrl}/addOrder`, {
               method: 'POST',
@@ -141,7 +150,7 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
         }
 
         if (type[1] === "Zlecenie") {
-
+          console.log('Zlecenie', post)
           const cancelation =
           {
             comments: "anulowano",
@@ -168,6 +177,7 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
 
 
         if (type[1] === "Praca") {
+          console.log('Praca', post)
           const zatwierdzono =
           {
             dateOfAcceptationPlk: moment().format('YYYY-MM-DD HH:mm'),

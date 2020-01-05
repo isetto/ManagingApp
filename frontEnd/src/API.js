@@ -7,11 +7,17 @@ export function downloadRaports(user) {
         headers: {
             'content-type': 'application/json'
         }
-    }).then(res => res.json());
+    }).then(res => res.json())
+        .catch((error) => {
+            console.log(error)
+        })
 }
 
 export function downloadAllRaports() {
-    return fetch(`${api_url}/downloadReports`).then(res => res.json());
+    return fetch(`${api_url}/downloadReports`).then(res => res.json())
+        .catch((error) => {
+            console.log(error)
+        })
 }
 
 export function downloadButtons(permissions) {
@@ -21,11 +27,18 @@ export function downloadButtons(permissions) {
         headers: {
             'content-type': 'application/json'
         }
-    }).then(res => res.json());
+    }).then(res => res.json())
+        .catch((err) => {
+            console.log(err)
+        })
+
 }
 
 export function downloadSingleRaport(id) {
-    return fetch(`${api_url}/downloadReport/${id}`).then(res => res.json());
+    return fetch(`${api_url}/downloadReport/${id}`).then(res => res.json())
+        .catch((error) => {
+            console.log(error)
+        })
 }
 
 export function singIn(user) {
@@ -47,6 +60,9 @@ export function singIn(user) {
             return "wrong"
         }
     })
+        .catch((error) => {
+            console.log(error)
+        })
 }
 
 export function updateRaport(id, raport) {
@@ -56,7 +72,10 @@ export function updateRaport(id, raport) {
         headers: {
             'content-type': 'application/json'
         }
-    }).then(res => res.json());
+    }).then(res => res.json())
+        .catch((error) => {
+            console.log(error)
+        })
 }
 export function updateButtons(permissions, buttons) {
     return fetch(`${api_url}/updateButtons/${permissions}`, {
@@ -65,7 +84,10 @@ export function updateButtons(permissions, buttons) {
         headers: {
             'content-type': 'application/json'
         }
-    }).then(res => res.json());
+    }).then(res => res.json())
+        .catch((error) => {
+            console.log(error)
+        })
 }
 
 
@@ -73,5 +95,8 @@ export function updateButtons(permissions, buttons) {
 export function deleteRaport(id) {
     return fetch(`${api_url}/deleteReport/${id}`, {
         method: 'DELETE'
-    });
+    })
+        .catch((error) => {
+            console.log(error)
+        })
 }

@@ -44,7 +44,7 @@ export default class Modal extends React.Component {
     onKeyUp = (e) => {
         // Lookout for ESC key (27)
         if (e.which === 27 && this.props.show) {
-            this.onClose(e);
+            this.props.onClose(e);
         }
     }
 
