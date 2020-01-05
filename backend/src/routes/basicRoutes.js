@@ -3,6 +3,10 @@ const queries = require("../../db/queries/crud");
 
 const router = new Router();
 
+router.get("/test", async ctx => {
+  console.log("dziala");
+});
+
 router.post("/downloadReports", async ctx => {
   ctx.body = await queries.downloadReportsByUser(ctx.request.body);
 });

@@ -1,22 +1,24 @@
 const Koa = require("koa");
 const bodyParser = require("koa-bodyparser");
-const PORT = process.env.PORT || 38002;
 const basicRoutes = require("./routes/basicRoutes");
 const cors = require("@koa/cors");
 const fetch = require("node-fetch");
 const app = new Koa();
 const moment = require("moment");
 const emaiInfo = require('../EmailInfo')
+const MailListener = require("mail-listener-next");
+
+
+
+const PORT = emaiInfo.debug.port
+const login = emaiInfo.debug.username
+const password = emaiInfo.debug.password
+const host = emaiInfo.debug.host
+const apiUrl = emaiInfo.debug.url;
+
 app.use(cors());
 app.use(bodyParser());
 app.use(basicRoutes.routes());
-
-const login = emaiInfo.username
-const password = emaiInfo.password
-const host = emaiInfo.host
-const apiUrl = "http://localhost:38002";
-
-const MailListener = require("mail-listener-next");
 
 const mailListener = new MailListener({
   username: login,
@@ -62,63 +64,131 @@ mailListener.on("server:disconnected", function () {
 
 mailListener.on("error", function (err) {
 
-  console.log(err);
+  console.log('err', err);
 });
 
 
 
 mailListener.on("mail", async function (mail, seqno, attributes) {
-  const lastNameList = ["Socha", "Kasprzycki", "Tomaszewski", "Jakubowski", "Spodarczyk",
-    "Sołtysiak", "Wyszomirska", "Skałecki", "Osękowski", "Kucharski"]
+  const lastNameList = ["socha", "kasprzycki", "tomaszewski", "jakubowski", "spodarczyk",
+    "sołtysiak", "wyszomirska", "skałecki", "osękowski", "kucharski"]
+
 
 
   const work = async () => {
 
     try {
 
-      let RegexQuery = [/Status pracy o numerze (....[0-9]+)./g, /Zlecona przez:.+?\s(.+)/g,
+      let regexChoosed;
+
+      let RegexText = [/Status pracy o numerze (....[0-9]+)./g, /Zlecona przez:.+?\s(.+)/g,
         /Data zlecenia:.(.+)./g, /Dla lokalizacji:.(.+?)\[/g,
-        /Opis:.(.+)./g, /Kategoria:.(.+)./g,
-        /Tryb realizacji:.(.+)./g, /Wymagane pobranie części:.(.+)./g,
+        /Opis:.(.+)/g, /Kategoria:.(.+)/g,
+        /Tryb realizacji:.(.+)/g, /Wymagane pobranie części:.(.+)/g,
         /Dla lokalizacji:.+?\[(.+?)\]/g,
-        /został zmieniony z ([^\s]+)/g, /Status pracy o numerze .....([0-9]+)./g, /Zlecona przez:.(.+)/g
+        /został zmieniony z ([^\s]+)/g, /Status pracy o numerze ....([0-9]+)/g, /Zlecona przez:.(.+)/g
       ];
 
-      // let RegexQuery = [/Status pracy o numerze <b>(.+?(?=<))/g, /Zlecona przez:.+?\s(.+?(?=<))/g,
-      //   /Data zlecenia: <b>(.+?(?=<))./g, /Dla lokalizacji: <b>(.+?)\[/g,
-      //   /Opis: <b>(.+?(?=<))/g, /Kategoria:..(.+)./g,
-      //   /Tryb realizacji: <b>(.+?(?=<))./g, /Wymagane pobranie części:..(.+)./g,
-      //   /Dla lokalizacji:.+?\[(.+?)\]/g,
-      //   /został zmieniony z <b>([^\s]+)/g, /Status pracy o numerze <b>....([0-9]+)/g, /Zlecona przez: <b>(.+?(?=<))/g
-      // ];
+      let RegexHtml = [/Status pracy o numerze <b>(.+?(?=<))/g, /Zlecona przez:.+?\s(.+?(?=<))/g,
+        /Data zlecenia: <b>(.+?(?=<))./g, /Dla lokalizacji: <b>(.+?)\[/g,
+        /Opis: <b>(.+?(?=<))/g, /Kategoria:..(.+)./g,
+        /Tryb realizacji: <b>(.+?(?=<))./g, /Wymagane pobranie części:..(.+)./g,
+        /Dla lokalizacji:.+?\[(.+?)\]/g,
+        /został zmieniony z <b>([^\s]+)/g, /Status pracy o numerze <b>....([0-9]+)/g, /Zlecona przez: <b>(.+?(?=<))/g
+      ];
 
+      let mailType;
+      // console.log('your mail:', mail)
+      // console.log('text', (mail.text))
+      // console.log('html', (mail.html))
+      if (mail.html !== undefined) {
+        //console.log('html type', mail)
+        mailType = mail.html
+        regexChoosed = RegexHtml
+      }
+      else if (mail.text !== undefined) {
+        //console.log('text type', mail)
+        mailType = mail.text
+        regexChoosed = RegexText
+      }
 
-
-
-      let orderLabel = RegexQuery[0].exec(mail.text);
-      let secondNameInstructing = RegexQuery[1].exec(mail.text);
-      let orderDate = RegexQuery[2].exec(mail.text);
-      let forLocation = RegexQuery[3].exec(mail.text);
-      let description = RegexQuery[4].exec(mail.text);
-      let kategoria = RegexQuery[5].exec(mail.text);
-      let realizationMode = RegexQuery[6].exec(mail.text);
-      let pobranieCzesci = RegexQuery[7].exec(mail.text);
-      let siteNr = RegexQuery[8].exec(mail.text);
-      let type = RegexQuery[9].exec(mail.text);
-      let orderId = RegexQuery[10].exec(mail.text);
-      let orderCreatedBy = RegexQuery[11].exec(mail.text);
-
-
+      let orderLabel = regexChoosed[0].exec(mailType);
+      let secondNameInstructing = regexChoosed[1].exec(mailType);
+      let orderDate = regexChoosed[2].exec(mailType);
+      let forLocation = regexChoosed[3].exec(mailType);
+      let description = regexChoosed[4].exec(mailType);
+      let kategoria = regexChoosed[5].exec(mailType);
+      let realizationMode = regexChoosed[6].exec(mailType);
+      let pobranieCzesci = regexChoosed[7].exec(mailType);
+      let siteNr = regexChoosed[8].exec(mailType);
+      let type = regexChoosed[9].exec(mailType);
+      let orderId = regexChoosed[10].exec(mailType);
+      let orderCreatedBy = regexChoosed[11].exec(mailType);
 
       const dane = () => {
+        let orderIdNew
+        let orderCreatedByNew
+        let dateOfOrderNew
+        let localizationNew
+        let realizationModedNew
+        let jobDescriptionNew
+        let localizationIdNew
+
+        try {
+          orderIdNew = orderLabel[1]
+        } catch (error) {
+          orderIdNew = error.message
+        }
+
+        try {
+          orderCreatedByNew = orderCreatedBy[1]
+        } catch (error) {
+          orderCreatedByNew = error.message
+        }
+
+        try {
+          dateOfOrderNew = orderDate[1]
+        } catch (error) {
+          dateOfOrderNew = error.message
+        }
+
+        try {
+          localizationNew = forLocation[1]
+        } catch (error) {
+          localizationNew = error.message
+        }
+
+        try {
+          realizationModedNew = realizationMode[1]
+        } catch (error) {
+          realizationModedNew = error.message
+        }
+
+        try {
+          jobDescriptionNew = description[1]
+        } catch (error) {
+          try {
+            jobDescriptionNew = /Opis: <b>(.+?(?=\n))/g.exec(mailType)[1]
+          } catch (error) {
+            jobDescriptionNew = error.message
+          }
+        }
+
+        try {
+          localizationIdNew = siteNr[1]
+        } catch (error) {
+          localizationIdNew = error.message
+        }
+
+
         let zlecenie = {
-          orderId: orderLabel[1],
-          orderCreatedBy: orderCreatedBy[1],
-          dateOfOrder: orderDate[1],
-          localization: forLocation[1],
-          realizationMode: realizationMode[1],
-          jobDescription: description[1],
-          localizationId: siteNr[1],
+          orderId: orderIdNew,
+          orderCreatedBy: orderCreatedByNew,
+          dateOfOrder: dateOfOrderNew,
+          localization: localizationNew,
+          realizationMode: realizationModedNew,
+          jobDescription: jobDescriptionNew,
+          localizationId: localizationIdNew,
           showDatePicker: "true",
           showDateInput: "none",
           disableInputs: false
@@ -126,16 +196,14 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
         return zlecenie
       }
 
-      console.log("zlecona przez: ", orderCreatedBy[1])
-      console.log("secondNameInstructing: ", secondNameInstructing[1])
 
-      if (lastNameList.includes(secondNameInstructing[1])) {
-        console.log('typ: ', type[1])
-        if (type[1] === "Formularz") {
+      if (lastNameList.includes(secondNameInstructing[1].toLowerCase())) {
+        //console.log('typ to:', type[1])
+        if (type[1].toLowerCase() === "formularz") {
 
           const post = await dane();
-          console.log('formularz', post)
           try {
+            //console.log('formularz', post)
             fetch(`${apiUrl}/addOrder`, {
               method: 'POST',
               body: JSON.stringify(post),
@@ -149,8 +217,8 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
           }
         }
 
-        if (type[1] === "Zlecenie") {
-          console.log('Zlecenie', post)
+        if (type[1].toLowerCase() === "zlecenie") {
+
           const cancelation =
           {
             comments: "anulowano",
@@ -159,7 +227,7 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
             disableInputs: true
           }
           try {
-
+            //console.log('formularz', cancelation)
             fetch(`${apiUrl}/cancelOrder/${orderId[1]}`, {
               method: 'PUT',
               body: JSON.stringify(cancelation),
@@ -176,8 +244,7 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
         }
 
 
-        if (type[1] === "Praca") {
-          console.log('Praca', post)
+        if (type[1].toLowerCase() === "praca") {
           const zatwierdzono =
           {
             dateOfAcceptationPlk: moment().format('YYYY-MM-DD HH:mm'),
@@ -185,19 +252,24 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
             showDateInput: "true",
             disableInputs: true
           }
-
-          fetch(`${apiUrl}/acceptOrder/${orderId[1]}`, {
-            method: 'PUT',
-            body: JSON.stringify(zatwierdzono),
-            headers: {
-              'content-type': 'application/json'
-            }
-          })
+          try {
+            // console.log('formularz', zatwierdzono)
+            fetch(`${apiUrl}/acceptOrder/${orderId[1]}`, {
+              method: 'PUT',
+              body: JSON.stringify(zatwierdzono),
+              headers: {
+                'content-type': 'application/json'
+              }
+            })
+          }
+          catch (error) {
+            console.log("blad", error);
+          }
         }
 
       }
       else {
-        console.log(`zlecajacy ${secondNameInstructing[1]} nie nalezy do naszych`)
+        // console.log(`zlecajacy ${secondNameInstructing[1]} nie nalezy do naszych`)
       }
     }
     catch (err) {
