@@ -967,7 +967,7 @@ class Main extends Component {
                 Header: "All",
                 id: 'all',
                 width: 0,
-                resizable: true,
+                resizable: false,
                 sortable: false,
                 Filter: () => { },
                 filterMethod: (filter, rows) =>
@@ -975,7 +975,7 @@ class Main extends Component {
                 filterAll: true,
                 getProps: () => {
                     return {
-                        style: { padding: "0px" }
+                        // style: { padding: "0px" }
                     }
                 },
                 filterMethod: (filter, rows) => {
@@ -1048,13 +1048,13 @@ class Main extends Component {
                 </div>
 
                 <ReactTable
-                    //TbodyComponent={this.bodyComponent}
+                    // TbodyComponent={TbodyComponent}
+                    // TrGroupComponent={TrGroupComponent}
                     style={{
-                        height: "600px" // This will force the table body to overflow and scroll, since there is not enough room
+                        height: "520px" // This will force the table body to overflow and scroll, since there is not enough room
                     }}
-                    className="-striped -highlight"
-                    TbodyComponent={TbodyComponent}
-                    TrGroupComponent={TrGroupComponent}
+                    //className="-striped -highlight"
+
                     filtered={this.state.filtered}
                     ref={r => this.reactTable = r}
                     onFilteredChange={this.onFilteredChange.bind(this)}
