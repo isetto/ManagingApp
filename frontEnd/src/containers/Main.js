@@ -467,6 +467,9 @@ class Main extends Component {
             {
                 Header: "numer lokalizacji",
                 accessor: "localizationId",
+                style: {
+                    textAlign: "center"
+                },
                 width: 150,
                 maxWidth: 150,
                 minWidth: 150,
@@ -477,6 +480,9 @@ class Main extends Component {
             {
                 Header: "tryb realizacji",
                 accessor: "realizationMode",
+                style: {
+                    textAlign: "center"
+                },
                 width: 150,
                 maxWidth: 150,
                 minWidth: 150,
@@ -535,9 +541,9 @@ class Main extends Component {
                     whiteSpace: 'unset'
                 },
 
-                width: 250,
-                maxWidth: 250,
-                minWidth: 250,
+                width: 350,
+                maxWidth: 350,
+                minWidth: 150,
                 filterMethod: (filter, rows) =>
                     matchSorter(rows, filter.value, { keys: ["jobDescription"] }),
                 filterAll: true
@@ -671,6 +677,9 @@ class Main extends Component {
                 Header: "uwagi",
                 accessor: "comments",
                 width: 250,
+                style: {
+                    textAlign: "center"
+                },
                 maxWidth: 250,
                 minWidth: 250,
                 show: commentsBt,
@@ -812,7 +821,8 @@ class Main extends Component {
                 Header: "prace dodatkowe?",
                 accessor: "additionalWorks",
                 style: {
-                    textAlign: "center"
+                    textAlign: "center",
+                    whiteSpace: 'unset'
                 },
                 width: 150,
                 maxWidth: 150,
@@ -826,7 +836,8 @@ class Main extends Component {
                 Header: "opis prac dodatkowych",
                 accessor: "additionalWorksDescription",
                 style: {
-                    textAlign: "center"
+                    textAlign: "center",
+                    whiteSpace: 'unset'
                 },
                 width: 250,
                 maxWidth: 250,
@@ -938,7 +949,6 @@ class Main extends Component {
                             <input type="button"
                                 onClick={() => {
                                     this.showModalAssigmentRaport(props.original.id)
-
                                 }}
                                 value="Edycja"
                                 className="btn btn-info" />
