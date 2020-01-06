@@ -31,7 +31,7 @@ const mailListener = new MailListener({
   debug: console.log, // Or your custom function with only one incoming argument. Default: null
   tlsOptions: { rejectUnauthorized: false },
   mailbox: "INBOX", // mailbox to monitor
-  searchFilter: ["SEEN"], // the search filter being used after an IDLE notification has been retrieved
+  searchFilter: ["UNSEEN"], // the search filter being used after an IDLE notification has been retrieved
   fetchUnreadOnStart: true, // use it only if you want to get all unread email on lib start. Default is `false`,
   mailParserOptions: { streamAttachments: true }, // options to be passed to mailParser lib.
   attachments: true, // download attachments as they are encountered to the project directory
@@ -81,12 +81,12 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
 
       let regexChoosed;
 
-      let RegexText = [/Status pracy o numerze (....[0-9]+)./g, /Zlecona przez:.+?\s(.+)/g,
-        /Data zlecenia:.(.+)./g, /Dla lokalizacji:.(.+?)\[/g,
-        /Opis:.(.+)/g, /Kategoria:.(.+)/g,
-        /Tryb realizacji:.(.+)/g, /Wymagane pobranie części:.(.+)/g,
+      let RegexText = [/Status pracy o numerze (....[0-9]+)./g, /Zlecona przez:.+?\s(.+).Data/g,
+        /Data zlecenia:.(.+)Dla/g, /Dla lokalizacji:.(.+)Rodzaj/g,
+        /Opis:.(.+)/g, /Kategoria:.(.+)Tryb/g,
+        /Tryb realizacji:.(.+)Wymagane/g, /Wymagane pobranie części:.(.+)Planowana/g,
         /Dla lokalizacji:.+?\[(.+?)\]/g,
-        /został zmieniony z ([^\s]+)/g, /Status pracy o numerze ....([0-9]+)/g, /Zlecona przez:.(.+)/g
+        /został zmieniony z ([^\s]+)/g, /Status pracy o numerze ....([0-9]+)/g, /Zlecona przez:.(.+)Data/g
       ];
 
       let RegexHtml = [/Status pracy o numerze <b>(.+?(?=<))/g, /Zlecona przez:.+?\s(.+?(?=<))/g,
@@ -96,19 +96,22 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
         /Dla lokalizacji:.+?\[(.+?)\]/g,
         /został zmieniony z <b>([^\s]+)/g, /Status pracy o numerze <b>....([0-9]+)/g, /Zlecona przez: <b>(.+?(?=<))/g
       ];
-
       let mailType;
       // console.log('your mail:', mail)
       // console.log('text', (mail.text))
       // console.log('html', (mail.html))
-      if (mail.html !== undefined) {
-        //console.log('html type', mail)
-        mailType = mail.html
-        regexChoosed = RegexHtml
+      if (mail.hasOwnProperty('html')) {
+        const data = mail.html.toString()
+        const res = data.replace(/<.*?>/g, " ")
+        mailType = res.replace(/\s\s+/g, " ")
+        console.log('html prepared', mailType)
+        regexChoosed = RegexText
       }
-      else if (mail.text !== undefined) {
-        //console.log('text type', mail)
-        mailType = mail.text
+      else if (mail.hasOwnProperty('text')) {
+        const data = mail.text
+        const res = data.replace(/[*]/g, "")
+        mailType = res.replace(/\n/g, " ")
+        console.log('text prepared', mailType)
         regexChoosed = RegexText
       }
 
@@ -195,15 +198,16 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
         }
         return zlecenie
       }
-
+      console.log('checkpoint1')
 
       if (lastNameList.includes(secondNameInstructing[1].toLowerCase())) {
-        //console.log('typ to:', type[1])
+        console.log('typ to:', type[1])
         if (type[1].toLowerCase() === "formularz") {
 
           const post = await dane();
+          console.log('send info', post)
           try {
-            //console.log('formularz', post)
+            console.log('formularz', post)
             fetch(`${apiUrl}/addOrder`, {
               method: 'POST',
               body: JSON.stringify(post),
@@ -227,7 +231,7 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
             disableInputs: true
           }
           try {
-            //console.log('formularz', cancelation)
+            console.log('formularz', cancelation)
             fetch(`${apiUrl}/cancelOrder/${orderId[1]}`, {
               method: 'PUT',
               body: JSON.stringify(cancelation),
@@ -253,7 +257,7 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
             disableInputs: true
           }
           try {
-            // console.log('formularz', zatwierdzono)
+            console.log('formularz', zatwierdzono)
             fetch(`${apiUrl}/acceptOrder/${orderId[1]}`, {
               method: 'PUT',
               body: JSON.stringify(zatwierdzono),
@@ -269,11 +273,11 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
 
       }
       else {
-        // console.log(`zlecajacy ${secondNameInstructing[1]} nie nalezy do naszych`)
+        console.log(`zlecajacy ${secondNameInstructing[1]} nie nalezy do naszych`)
       }
     }
     catch (err) {
-      console.log(err)
+      console.log("blad", err)
     }
 
   }
