@@ -64,6 +64,19 @@
   font-size: 13px;
 }
 
+.ReactTable .rt-table {
+  overflow: hidden;
+}
+
+.ReactTable .rt-thead,
+.ReactTable .rt-tbody {
+  min-width: auto !important;
+}
+
+.ReactTable .rt-thead {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
 
 
 

@@ -128,10 +128,22 @@ class Main extends Component {
         this.filterAll = this.filterAll.bind(this);
     }
 
+    handleScroll(event) {
+        let headers = document.getElementsByClassName("rt-thead");
+        for (let i = 0; i < headers.length; i++) {
+            headers[i].scrollLeft = event.target.scrollLeft;
+        }
+    }
+
+    componentWillUnmount() {
+        this._tBodyComponent.removeEventListener("scroll", this.handleScroll);
+    }
 
     componentDidMount() {
         console.log("permission:" + this.state.permissions)
         console.log("permission:" + this.state.login)
+        this._tBodyComponent = document.getElementsByClassName("rt-tbody")[0];
+        this._tBodyComponent.addEventListener("scroll", this.handleScroll);
         const stateShortCut = this.state;
         if (stateShortCut.permissions === "worker") {
             downloadRaports({ "executor": this.state.login })
@@ -415,6 +427,18 @@ class Main extends Component {
                 submit={this.handleSubmit}
             />
         );
+
+        const TbodyComponent = props => {
+            for (let i = 0; i < props.children[0].length; i++) {
+                props.children[0][i] = React.cloneElement(props.children[0][i], { minWidth: props.style.minWidth })
+            }
+
+            return <div className="rt-tbody">{props.children}</div>
+        }
+
+        const TrGroupComponent = props => {
+            return <div className="rt-tr-group" role="rowgroup" style={{ minWidth: props.minWidth }}>{props.children}</div>
+        }
 
         const columns = [
             {
@@ -943,7 +967,7 @@ class Main extends Component {
                 Header: "All",
                 id: 'all',
                 width: 0,
-                resizable: false,
+                resizable: true,
                 sortable: false,
                 Filter: () => { },
                 filterMethod: (filter, rows) =>
@@ -951,7 +975,7 @@ class Main extends Component {
                 filterAll: true,
                 getProps: () => {
                     return {
-                        // style: { padding: "0px"}
+                        style: { padding: "0px" }
                     }
                 },
                 filterMethod: (filter, rows) => {
@@ -1025,6 +1049,12 @@ class Main extends Component {
 
                 <ReactTable
                     //TbodyComponent={this.bodyComponent}
+                    style={{
+                        height: "600px" // This will force the table body to overflow and scroll, since there is not enough room
+                    }}
+                    className="-striped -highlight"
+                    TbodyComponent={TbodyComponent}
+                    TrGroupComponent={TrGroupComponent}
                     filtered={this.state.filtered}
                     ref={r => this.reactTable = r}
                     onFilteredChange={this.onFilteredChange.bind(this)}
