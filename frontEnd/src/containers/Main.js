@@ -507,12 +507,13 @@ class Main extends Component {
                 Header: "opis prac",
                 accessor: "jobDescription",
                 style: {
-                    textAlign: "center"
+                    textAlign: "center",
+                    whiteSpace: 'unset'
                 },
 
-                width: 300,
-                maxWidth: 300,
-                minWidth: 300,
+                width: 250,
+                maxWidth: 250,
+                minWidth: 250,
                 filterMethod: (filter, rows) =>
                     matchSorter(rows, filter.value, { keys: ["jobDescription"] }),
                 filterAll: true
@@ -549,7 +550,8 @@ class Main extends Component {
                 Header: "opis problemu",
                 accessor: "problemDescription",
                 style: {
-                    textAlign: "center"
+                    textAlign: "center",
+                    whiteSpace: 'unset'
                 },
                 width: 250,
                 maxWidth: 250,
@@ -993,7 +995,6 @@ class Main extends Component {
                     });
                     return result;
                 },
-                filterAll: true,
             }
         ]
 
@@ -1023,7 +1024,7 @@ class Main extends Component {
                 </div>
 
                 <ReactTable
-                    TbodyComponent={this.bodyComponent}
+                    //TbodyComponent={this.bodyComponent}
                     filtered={this.state.filtered}
                     ref={r => this.reactTable = r}
                     onFilteredChange={this.onFilteredChange.bind(this)}
