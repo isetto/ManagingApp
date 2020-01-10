@@ -524,7 +524,8 @@ class Main extends Component {
                 Header: "lokalizacja",
                 accessor: "localization",
                 style: {
-                    textAlign: "center"
+                    textAlign: "center",
+                    whiteSpace: 'unset'
                 },
                 width: 200,
                 maxWidth: 200,

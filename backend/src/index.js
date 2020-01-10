@@ -82,7 +82,7 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
       let regexChoosed;
 
       let RegexText = [/Status pracy o numerze (....[0-9]+)./g, /Zlecona przez:.+?\s(.+).Data/g,
-        /Data zlecenia:.(.+)Dla/g, /Dla lokalizacji:.(.+)Rodzaj/g,
+        /Data zlecenia:.(.+)Dla/g, /adres:.(.+)Rodzaj/g,
         /Opis:.(.+)/g, /Kategoria:.(.+)Tryb/g,
         /Tryb realizacji:.(.+)Wymagane/g, /Wymagane pobranie części:.(.+)Planowana/g,
         /Dla lokalizacji:.+?\[(.+?)\]/g,
@@ -97,9 +97,6 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
         /został zmieniony z <b>([^\s]+)/g, /Status pracy o numerze <b>....([0-9]+)/g, /Zlecona przez: <b>(.+?(?=<))/g
       ];
       let mailType;
-      // console.log('your mail:', mail)
-      // console.log('text', (mail.text))
-      // console.log('html', (mail.html))
       if (mail.hasOwnProperty('html')) {
         const data = mail.html.toString()
         const res = data.replace(/<.*?>/g, " ")
