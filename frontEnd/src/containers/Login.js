@@ -21,6 +21,7 @@ class Login extends Component {
             login: this.state.login,
             password: this.state.password
         }
+        console.log('login start')
         await singIn(passess)
             .then((data) => {
                 if (data === "wrong") {
@@ -33,7 +34,7 @@ class Login extends Component {
                     });
                 }
 
-            })
+            }).catch((err) => console.log('err', err))
 
     }
 
@@ -50,7 +51,7 @@ class Login extends Component {
                         <label>hasło</label>
                         <input type="password" autoComplete="off" onChange={this.inputChange} className="form-control" value={this.state.password} name="password" ></input>
                         <br />
-                        <button className="btn btn-success">zaloguj</button>
+                        <button className="btn btn-success">Zaloguj</button>
                     </form>
                     <span style={{ visibility: this.state.visible }}>zły login lub hasło</span>
                 </main>
