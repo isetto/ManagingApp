@@ -151,11 +151,18 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
 
         try {
           dateOfOrderNew = orderDate[1]
-          console.log(dateOfOrderNew)
-          console.log(typeof dateOfOrderNew)
-          dateOfOrderNew = new Date(dateOfOrderNew)
-          console.log(dateOfOrderNew)
-          console.log(typeof dateOfOrderNew)
+          const fields = dateOfOrderNew.split(' ');
+          const date = fields[0];
+          const time = fields[1];
+          const dateFileds = date.split('-')
+          const timeFileds = time.split(':')
+          const day = dateFileds[0]
+          const month = dateFileds[1]
+          const year = dateFileds[2]
+          const hour = timeFileds[0]
+          const minute = timeFileds[1]
+          const finalDate = new Date(year, month - 1, day, hour, minute, '00')
+          dateOfOrderNew = finalDate
         } catch (error) {
           dateOfOrderNew = error.message
         }

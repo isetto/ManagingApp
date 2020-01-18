@@ -148,12 +148,31 @@ class Main extends Component {
         if (stateShortCut.permissions === "worker") {
             downloadRaports({ "executor": this.state.login })
                 .then(posts => {
+                    posts.forEach(el => {
+                        el.dateOfOrder = el.dateOfOrder ? this.parseDate(el.dateOfOrder).toLocaleString() : el.dateOfOrder
+                        el.dateOfFinishedOrder = el.dateOfFinishedOrder ? this.parseDate(el.dateOfFinishedOrder).toLocaleString() : el.dateOfFinishedOrder
+                        el.dateOfArrival = el.dateOfArrival ? this.parseDate(el.dateOfArrival).toLocaleString() : el.dateOfArrival
+                        el.dateOfAdditionalWorks = el.dateOfAdditionalWorks ? this.parseDate(el.dateOfAdditionalWorks).toLocaleString() : el.dateOfAdditionalWorks
+                        el.dateOfInvoice = el.dateOfInvoice ? this.parseDate(el.dateOfInvoice).toLocaleString() : el.dateOfInvoice
+                        el.dateOfAcceptationSpacenet = el.dateOfAcceptationSpacenet ? this.parseDate(el.dateOfAcceptationSpacenet).toLocaleString() : el.dateOfAcceptationSpacenet
+                        el.dateOfAcceptationPlk = el.dateOfAcceptationPlk ? this.parseDate(el.dateOfAcceptationPlk).toLocaleString() : el.dateOfAcceptationPlk
+
+                    })
                     this.setState({ posts: posts })
                 })
         }
         else {
             downloadAllRaports()
                 .then(posts => {
+                    posts.forEach(el => {
+                        el.dateOfOrder = el.dateOfOrder ? this.parseDate(el.dateOfOrder) : el.dateOfOrder
+                        el.dateOfFinishedOrder = el.dateOfFinishedOrder ? this.parseDate(el.dateOfFinishedOrder).toLocaleString() : el.dateOfFinishedOrder
+                        el.dateOfArrival = el.dateOfArrival ? this.parseDate(el.dateOfArrival).toLocaleString() : el.dateOfArrival
+                        el.dateOfAdditionalWorks = el.dateOfAdditionalWorks ? this.parseDate(el.dateOfAdditionalWorks).toLocaleString() : el.dateOfAdditionalWorks
+                        el.dateOfInvoice = el.dateOfInvoice ? this.parseDate(el.dateOfInvoice).toLocaleString() : el.dateOfInvoice
+                        el.dateOfAcceptationSpacenet = el.dateOfAcceptationSpacenet ? this.parseDate(el.dateOfAcceptationSpacenet).toLocaleString() : el.dateOfAcceptationSpacenet
+                        el.dateOfAcceptationPlk = el.dateOfAcceptationPlk ? this.parseDate(el.dateOfAcceptationPlk).toLocaleString() : el.dateOfAcceptationPlk
+                    })
                     this.setState({ posts: posts })
                 })
         }
@@ -171,6 +190,11 @@ class Main extends Component {
 
         this.downloadBt({ permissions: this.state.permissions })
 
+    }
+
+    parseDate = (date) => {
+        const utcFormat = moment.utc(new Date(date)).format('YYYY-MM-DD HH:mm:ss')
+        return moment.utc(utcFormat).local().format('YYYY-MM-DD HH:mm:ss');
     }
 
     downloadBt = (permissions) => {
@@ -538,7 +562,6 @@ class Main extends Component {
                 Header: "opis prac",
                 accessor: "jobDescription",
                 style: {
-                    textAlign: "center",
                     whiteSpace: 'unset'
                 },
 
@@ -581,7 +604,6 @@ class Main extends Component {
                 Header: "opis problemu",
                 accessor: "problemDescription",
                 style: {
-                    textAlign: "center",
                     whiteSpace: 'unset'
                 },
                 width: 250,
@@ -679,7 +701,6 @@ class Main extends Component {
                 accessor: "comments",
                 width: 250,
                 style: {
-                    textAlign: "center"
                 },
                 maxWidth: 250,
                 minWidth: 250,
@@ -822,7 +843,6 @@ class Main extends Component {
                 Header: "prace dodatkowe?",
                 accessor: "additionalWorks",
                 style: {
-                    textAlign: "center",
                     whiteSpace: 'unset'
                 },
                 width: 150,
@@ -837,7 +857,6 @@ class Main extends Component {
                 Header: "opis prac dodatkowych",
                 accessor: "additionalWorksDescription",
                 style: {
-                    textAlign: "center",
                     whiteSpace: 'unset'
                 },
                 width: 250,
