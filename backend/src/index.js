@@ -10,11 +10,11 @@ const MailListener = require("mail-listener-next");
 
 
 
-const PORT = emaiInfo.debug.port
-const login = emaiInfo.debug.username
-const password = emaiInfo.debug.password
-const host = emaiInfo.debug.host
-const apiUrl = emaiInfo.debug.url;
+const PORT = emaiInfo.prodChillmeets.port
+const login = emaiInfo.prodChillmeets.username
+const password = emaiInfo.prodChillmeets.password
+const host = emaiInfo.prodChillmeets.host
+const apiUrl = emaiInfo.prodChillmeets.url;
 
 app.use(cors());
 app.use(bodyParser());
@@ -82,11 +82,12 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
       let regexChoosed;
 
       let RegexText = [/Status pracy o numerze (....[0-9]+)./g, /Zlecona przez:.+?\s(.+).Data/g,
-        /Data zlecenia:.(.+)Dla/g, /adres:.(.+)Rodzaj/g,
+        /Data zlecenia:.(.+).Dla/g, /adres:.(.+)Rodzaj/g,
         /Opis:.(.+)/g, /Kategoria:.(.+)Tryb/g,
         /Tryb realizacji:.(.+)Wymagane/g, /Wymagane pobranie części:.(.+)Planowana/g,
         /Dla lokalizacji:.+?\[(.+?)\]/g,
-        /został zmieniony z ([^\s]+)/g, /Status pracy o numerze ....([0-9]+)/g, /Zlecona przez:.(.+)Data/g
+        /został zmieniony z ([^\s]+)/g, /Status pracy o numerze ....([0-9]+)/g, /Zlecona przez:.(.+)Data/g,
+        /Status pracy(.+?)przez/gi
       ];
 
       let RegexHtml = [/Status pracy o numerze <b>(.+?(?=<))/g, /Zlecona przez:.+?\s(.+?(?=<))/g,
@@ -101,14 +102,14 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
         const data = mail.html.toString()
         const res = data.replace(/<.*?>/g, " ")
         mailType = res.replace(/\s\s+/g, " ")
-        console.log('html prepared', mailType)
+        // console.log('html prepared', mailType)
         regexChoosed = RegexText
       }
       else if (mail.hasOwnProperty('text')) {
         const data = mail.text
         const res = data.replace(/[*]/g, "")
         mailType = res.replace(/\n/g, " ")
-        console.log('text prepared', mailType)
+        //  console.log('text prepared', mailType)
         regexChoosed = RegexText
       }
 
@@ -124,6 +125,7 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
       let type = regexChoosed[9].exec(mailType);
       let orderId = regexChoosed[10].exec(mailType);
       let orderCreatedBy = regexChoosed[11].exec(mailType);
+      let generalType = regexChoosed[12].exec(mailType);
 
       const dane = () => {
         let orderIdNew
@@ -133,6 +135,7 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
         let realizationModedNew
         let jobDescriptionNew
         let localizationIdNew
+        let generalTypeNew
 
         try {
           orderIdNew = orderLabel[1]
@@ -148,6 +151,11 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
 
         try {
           dateOfOrderNew = orderDate[1]
+          console.log(dateOfOrderNew)
+          console.log(typeof dateOfOrderNew)
+          dateOfOrderNew = new Date(dateOfOrderNew)
+          console.log(dateOfOrderNew)
+          console.log(typeof dateOfOrderNew)
         } catch (error) {
           dateOfOrderNew = error.message
         }
@@ -181,6 +189,7 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
         }
 
 
+
         let zlecenie = {
           orderId: orderIdNew,
           orderCreatedBy: orderCreatedByNew,
@@ -195,16 +204,14 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
         }
         return zlecenie
       }
-      console.log('checkpoint1')
 
+      // console.log('generalTypeNew', generalType[1])
       if (lastNameList.includes(secondNameInstructing[1].toLowerCase())) {
-        console.log('typ to:', type[1])
-        if (type[1].toLowerCase() === "formularz") {
+        if (generalType[1].toLowerCase().includes('utworz')) {
 
           const post = await dane();
-          console.log('send info', post)
+          console.log('zlecenie pracy')
           try {
-            console.log('formularz', post)
             fetch(`${apiUrl}/addOrder`, {
               method: 'POST',
               body: JSON.stringify(post),
@@ -218,7 +225,7 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
           }
         }
 
-        if (type[1].toLowerCase() === "zlecenie") {
+        if (generalType[1].toLowerCase().includes('anulow')) {
 
           const cancelation =
           {
@@ -228,7 +235,7 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
             disableInputs: true
           }
           try {
-            console.log('formularz', cancelation)
+            console.log('anulowanie', cancelation)
             fetch(`${apiUrl}/cancelOrder/${orderId[1]}`, {
               method: 'PUT',
               body: JSON.stringify(cancelation),
@@ -245,7 +252,7 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
         }
 
 
-        if (type[1].toLowerCase() === "praca") {
+        if (generalType[1].toLowerCase().includes('zatwierdz')) {
           const zatwierdzono =
           {
             dateOfAcceptationPlk: moment().format('YYYY-MM-DD HH:mm'),
@@ -254,7 +261,7 @@ mailListener.on("mail", async function (mail, seqno, attributes) {
             disableInputs: true
           }
           try {
-            console.log('formularz', zatwierdzono)
+            console.log('zatwierdzono', zatwierdzono)
             fetch(`${apiUrl}/acceptOrder/${orderId[1]}`, {
               method: 'PUT',
               body: JSON.stringify(zatwierdzono),
