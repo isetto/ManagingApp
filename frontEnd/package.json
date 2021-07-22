@@ -40,7 +40,7 @@
     "react-widgets": "^4.4.9",
     "reactstrap": "^7.1.0",
     "save": "^2.3.3",
-    "xlsx": "^0.14.1",
+    "xlsx": "^0.17.0",
     "xlsx-style": "^0.8.13"
   },
   "scripts": {
